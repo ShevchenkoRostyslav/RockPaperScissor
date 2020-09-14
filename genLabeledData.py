@@ -2,6 +2,7 @@ import argparse
 from typing import Dict
 import cv2
 import os
+from pathlib import Path
 
 
 def parse_args() -> Dict:
@@ -27,10 +28,7 @@ def prepare_image_path(label) -> str:
     """
     PATH = os.getcwd()
     save_path = os.path.join(PATH, label)
-    try:
-        os.mkdir(save_path)
-    except FileExistsError:
-        pass
+    Path(save_path).mkdir(exist_ok=True)
     return save_path
 
 
