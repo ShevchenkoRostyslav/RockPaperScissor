@@ -6,6 +6,7 @@ import random
 from typing import Tuple
 
 LABELS = ['rock', 'paper', 'scissor', 'noise']
+NUMBER_LABEL_MATCH = { idx: name for idx, name in enumerate(LABELS)}
 PATH = os.getcwd()
 
 
@@ -73,7 +74,7 @@ def train_test_split(test_frac: float, random_seed: int = None) -> Tuple[str, st
         train_dst = create_folder(os.path.join(train_path, label))
         # copy images to training folder
         total_imgs = copy_label(label, src, train_dst)
-        # randomly move test_frac of images from train folder into the test folder
+        # randomly choose test_frac of images from train folder into the test folder
         test_dst = create_folder(os.path.join(test_path, label))
         test_imgs = int(total_imgs * test_frac)
         move_label(label, train_dst, test_dst, test_imgs, random_seed)
