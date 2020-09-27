@@ -59,7 +59,7 @@ def copy_label(label: str, src_dir: str, dst_dir: str) -> int:
     return len(imgs)
 
 
-def train_test_split(test_frac: float, random_seed: int = None) -> Tuple[str, str]:
+def train_test_split(test_frac: float, with_noise: bool=True, random_seed: int = None) -> Tuple[str, str]:
     """Split the images into training and test according to the test_frac.
 
     :param test_frac: fraction of the images to use in the test dataset [0:1]
@@ -70,6 +70,8 @@ def train_test_split(test_frac: float, random_seed: int = None) -> Tuple[str, st
     train_path = create_folder(os.path.join(PATH, 'train'))
     test_path = create_folder(os.path.join(PATH, 'test'))
     for label in LABELS:
+        # remove noise if specified
+        if not with_noise and label == 'noise': continue
         src = os.path.join(PATH, label)
         train_dst = create_folder(os.path.join(train_path, label))
         # copy images to training folder
