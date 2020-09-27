@@ -63,6 +63,7 @@ def train_test_split(test_frac: float, with_noise: bool=True, random_seed: int =
     """Split the images into training and test according to the test_frac.
 
     :param test_frac: fraction of the images to use in the test dataset [0:1]
+    :param with_noise: whether add noise data to the train/test folders
     :param random_seed: random seed to fix or None if not
     :return: path to the training and test datasets
     """
