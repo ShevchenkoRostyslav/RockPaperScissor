@@ -50,7 +50,7 @@ class TestRockPaperScissorGame(TestCase):
         while True:
             ret, frame = cap.read()
             frame = game.visualize_choices(frame, 'rock', 'paper')
-            frame = game.update_camera_frame(frame)
+            frame = game.visualize_camera_frame(frame)
             if cv2.waitKey(1) & 0xff == ord('q'):
                 break
 

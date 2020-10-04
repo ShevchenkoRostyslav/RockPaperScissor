@@ -1,5 +1,6 @@
 import random
 import time
+from typing import Union
 
 import tensorflow.keras as K
 import cv2
@@ -8,13 +9,15 @@ import os
 from abc import abstractmethod
 from trainTestSplit import NUMBER_LABEL_MATCH
 import logging
+
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
+
 def prepImg(pth):
-    return cv2.resize(pth, (300, 300)).reshape(1, 300, 300, 3)/255.
+    return cv2.resize(pth, (300, 300)).reshape(1, 300, 300, 3) / 255.
 
 
 class Player:
@@ -69,7 +72,6 @@ class User(Player):
         return max_prediction
 
 
-
 class RockPaperScissorGame:
     OPTIONS = ['rock', 'paper', 'scissor']
     RULES = {'rock': 'scissor', 'scissor': 'paper', 'paper': 'rock'}
@@ -94,6 +96,11 @@ class RockPaperScissorGame:
         cv2.destroyAllWindows()
 
     def round(self, cap):
+        """One round of the game.
+
+        :param cap: VideoCapture
+        :return:
+        """
         start = time.time()
         played = False
         player1_choice, player2_choice = '', ''
@@ -104,7 +111,7 @@ class RockPaperScissorGame:
             frame = cv2.putText(frame, str(cnt), (550, 100), cv2.FONT_HERSHEY_SIMPLEX, 3, (250, 250, 0), 2, cv2.LINE_AA)
             # display the round
             frame = cv2.putText(frame, f'Round: {self.current_round}', (550, 150), cv2.FONT_HERSHEY_SIMPLEX, 1,
-                            (250, 250, 0), 2, cv2.LINE_AA)
+                                (250, 250, 0), 2, cv2.LINE_AA)
             if cnt >= 5:
                 # players make a move
                 if not played:
@@ -112,7 +119,7 @@ class RockPaperScissorGame:
                     player2_choice = self.player2.choose()
                     played = self.update_scores(player1_choice, player2_choice)
             frame = self.visualize_choices(frame, player1_choice, player2_choice)
-            self.update_camera_frame(frame)
+            self.visualize_camera_frame(frame)
             print(cnt)
             if cv2.waitKey(1) & 0xff == ord('q'):
                 break
@@ -120,7 +127,12 @@ class RockPaperScissorGame:
                 break
         return 0  # self.update_scores(player1_choice, player2_choice)
 
-    def update_camera_frame(self, frame):
+    def visualize_camera_frame(self, frame) -> None:
+        """Show the video-frame image together with the current player scores and a rectangle for the user-hand.
+
+        :param frame:
+        :return:
+        """
         # show current scores
         frame = cv2.putText(frame,
                             f"{self.player2.name} : {self.player2.score}", (950, 90), cv2.FONT_HERSHEY_SIMPLEX, 1,
@@ -128,19 +140,26 @@ class RockPaperScissorGame:
         frame = cv2.putText(frame,
                             f"{self.player1.name} : {self.player1.score}", (100, 90), cv2.FONT_HERSHEY_SIMPLEX, 1,
                             (250, 250, 0), 2, cv2.LINE_AA)
-        # ractangle for the user-hand
+        # rectangle for the user-hand
         cv2.rectangle(frame, (100, 100), (420, 420), (255, 255, 255), 2)
         # display the web-camera frame
         cv2.imshow('Rock Paper Scissor', frame)
 
     def visualize_choices(self, frame, choice1: str, choice2: str):
+        """Update the video-frame with the user choices.
+
+        :param frame:
+        :param choice1: choice of the first player
+        :param choice2: choice of the second player
+        :return: updated video-frame
+        """
         frame = cv2.putText(frame, f"{self.player1.name} played : {choice1}", (100, 450), cv2.FONT_HERSHEY_SIMPLEX, 1,
                             (250, 250, 0), 2, cv2.LINE_AA)
         frame = cv2.putText(frame, f"{self.player2.name} played : {choice2}", (800, 450), cv2.FONT_HERSHEY_SIMPLEX, 1,
                             (250, 250, 0), 2, cv2.LINE_AA)
         return frame
 
-    def update_scores(self, choice1: str, choice2: str):
+    def update_scores(self, choice1: str, choice2: str) -> bool:
         """Update the players scores according to the rules of the game.
 
         :param choice1: choice of the player1.
@@ -159,7 +178,7 @@ class RockPaperScissorGame:
             raise ValueError(f'"{choice1}" is not a valid option {RockPaperScissorGame.OPTIONS}.')
         return True
 
-    def check_winner(self):
+    def check_winner(self) -> Union[Player, None]:
         """Determine the game winner after playing all the rounds.
 
         :return: either a player object or None if both players have same scores
@@ -170,6 +189,7 @@ class RockPaperScissorGame:
             return None
         else:
             return self.player2
+
 
 if __name__ == '__main__':
     trained_model = K.models.load_model('model_weights/model.h5')
