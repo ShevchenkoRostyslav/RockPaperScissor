@@ -1,9 +1,12 @@
 import time
 from unittest import TestCase
-from play import RockPaperScissorGame, Bot, User
+from play import RockPaperScissorGame, Bot, User, LOGGER
 import cv2
-
+import logging
+import sys
 import tensorflow.keras as K
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 class TestRockPaperScissorGame(TestCase):
@@ -27,14 +30,6 @@ class TestRockPaperScissorGame(TestCase):
     def test_round_bot_user(self):
         # case 1: two bots
         cap = cv2.VideoCapture(0)
-        # while True:
-        #     ret, frame = cap.read()
-        #     cv2.rectangle(frame, (100, 150), (300, 350), (255, 255, 255), 2)
-        #     # cv2.imshow('Rock Paper Scissor', frame)
-        #     cv2.imshow('Rock Paper Scissor', frame[50:350, 100:400])
-        #     if cv2.waitKey(1) & 0xff == ord('q'):
-        #         break
-        # load the model
         trained_model = K.models.load_model('../model_weights/model.h5')
         user = User(trained_model)
         bot = Bot()
@@ -48,7 +43,16 @@ class TestRockPaperScissorGame(TestCase):
         cv2.destroyAllWindows()
 
     def test_visualize_choices(self):
-        self.fail()
+        cap = cv2.VideoCapture(0)
+        bot1 = Bot()
+        bot2 = Bot()
+        game = RockPaperScissorGame(bot1, bot2, 3)
+        while True:
+            ret, frame = cap.read()
+            frame = game.visualize_choices(frame, 'rock', 'paper')
+            frame = game.update_camera_frame(frame)
+            if cv2.waitKey(1) & 0xff == ord('q'):
+                break
 
     def test_update_scores(self):
         user = Bot()
