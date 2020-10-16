@@ -5,21 +5,6 @@ import os
 from pathlib import Path
 
 
-def parse_args() -> Dict:
-    """Input argument parser
-
-    :return:
-    """
-    parser = argparse.ArgumentParser(description='Generate data by showing rock/paper/scissor/noise to the web-cam')
-    parser.add_argument('--label', type=str, choices=['rock', 'paper', 'scissor', 'noise'],
-                        help='Label of the pictures to be shown', required=True)
-    parser.add_argument('--max_images', type=int, default=None,
-                        help='Maximal number of images to be saved')
-    # Execute parse_args()
-    args = parser.parse_args()
-    return vars(args)
-
-
 def prepare_image_path(label) -> str:
     """If does not exist - create the directory by the label name.
 
@@ -27,7 +12,7 @@ def prepare_image_path(label) -> str:
     :return:
     """
     PATH = os.getcwd()
-    save_path = os.path.join(PATH, label)
+    save_path = os.path.join(PATH, 'data', label)
     Path(save_path).mkdir(exist_ok=True)
     return save_path
 
@@ -69,6 +54,21 @@ def capture_labeled_images(label: str, max_imgs: int) -> None:
 
     cap.release()
     cv2.destroyAllWindows()
+
+
+def parse_args() -> Dict:
+    """Input argument parser
+
+    :return:
+    """
+    parser = argparse.ArgumentParser(description='Generate data by showing rock/paper/scissor/noise to the web-cam')
+    parser.add_argument('--label', type=str, choices=['rock', 'paper', 'scissor', 'noise'],
+                        help='Label of the pictures to be shown', required=True)
+    parser.add_argument('--max_images', type=int, default=None,
+                        help='Maximal number of images to be saved')
+    # Execute parse_args()
+    args = parser.parse_args()
+    return vars(args)
 
 
 if __name__ == '__main__':
