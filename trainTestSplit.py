@@ -73,7 +73,7 @@ def train_test_split(test_frac: float, with_noise: bool=True, random_seed: int =
     for label in LABELS:
         # remove noise if specified
         if not with_noise and label == 'noise': continue
-        src = os.path.join(PATH, label)
+        src = os.path.join(PATH, 'data', label)
         train_dst = create_folder(os.path.join(train_path, label))
         # copy images to training folder
         total_imgs = copy_label(label, src, train_dst)
