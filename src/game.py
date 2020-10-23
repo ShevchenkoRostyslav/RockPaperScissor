@@ -30,7 +30,7 @@ class Player:
         self.score += 1
 
     def won(self):
-        LOGGER.info(f'{self.name} WON the match!')
+        return f'{self.name} WON the match!'
 
 
 class Bot(Player):
@@ -80,16 +80,40 @@ class RockPaperScissorGame:
 
     def play(self):
         cap = cv2.VideoCapture(0)
-        for round in range(self.rounds):
+        for round in range(1, self.rounds+1):
             LOGGER.info('ROUND:', round)
             self.current_round = round
             self.round(cap)
         winner = self.check_winner()
+        # close all the opened windows
+        cv2.destroyAllWindows()
+        self.declare_winner(winner, cap)
 
         # close the camera
         cap.release()
         # close all the opened windows
         cv2.destroyAllWindows()
+
+    def declare_winner(self, player: Player, cap) -> None:
+        """Winner declaration
+
+        :param player: winner
+        :param cap: VideoCapture
+        :return:
+        """
+        start = time.time()
+        while True:
+            ret, frame = cap.read()
+            cnt = int(time.time() - start)
+            winner_message = 'Equal scores'
+            if player:
+                winner_message = player.won()
+            frame = cv2.putText(frame, winner_message, (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (250, 250, 0), 2, cv2.LINE_AA)
+            self.visualize_camera_frame(frame, with_ractangle=False)
+            if cv2.waitKey(1) & 0xff == ord('q'):
+                break
+            if cnt >=5:
+                break
 
     def round(self, cap):
         """One round of the game.
@@ -116,14 +140,13 @@ class RockPaperScissorGame:
                     played = self.update_scores(player1_choice, player2_choice)
             frame = self.visualize_choices(frame, player1_choice, player2_choice)
             self.visualize_camera_frame(frame)
-            print(cnt)
             if cv2.waitKey(1) & 0xff == ord('q'):
                 break
             if cnt > 12 and played:
                 break
-        return 0  # self.update_scores(player1_choice, player2_choice)
+        return 0
 
-    def visualize_camera_frame(self, frame) -> None:
+    def visualize_camera_frame(self, frame, with_ractangle: bool=True) -> None:
         """Show the video-frame image together with the current player scores and a rectangle for the user-hand.
 
         :param frame:
@@ -137,7 +160,7 @@ class RockPaperScissorGame:
                             f"{self.player1.name} : {self.player1.score}", (100, 90), cv2.FONT_HERSHEY_SIMPLEX, 1,
                             (250, 250, 0), 2, cv2.LINE_AA)
         # rectangle for the user-hand
-        cv2.rectangle(frame, (100, 100), (420, 420), (255, 255, 255), 2)
+        if with_ractangle: cv2.rectangle(frame, (100, 100), (420, 420), (255, 255, 255), 2)
         # display the web-camera frame
         cv2.imshow('Rock Paper Scissor', frame)
 

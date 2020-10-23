@@ -90,3 +90,9 @@ class TestRockPaperScissorGame(TestCase):
         player2.score = 1
         winner = game.check_winner()
         self.assertEqual(winner, None)
+
+    def test_declare_winner(self):
+        player1 = Bot()
+        game = RockPaperScissorGame(player1, player1, 1)
+        cap = cv2.VideoCapture(0)
+        game.declare_winner(player1, cap)
