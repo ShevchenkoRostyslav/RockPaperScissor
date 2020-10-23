@@ -68,8 +68,8 @@ def train_test_split(test_frac: float, with_noise: bool=True, random_seed: int =
     :return: path to the training and test datasets
     """
     # clean directories for test and train images
-    train_path = create_folder(os.path.join(PATH, 'train'))
-    test_path = create_folder(os.path.join(PATH, 'test'))
+    train_path = create_folder(os.path.join(PATH, 'data/train'))
+    test_path = create_folder(os.path.join(PATH, 'data/test'))
     for label in LABELS:
         # remove noise if specified
         if not with_noise and label == 'noise': continue
