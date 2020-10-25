@@ -6,7 +6,7 @@ import os
 import random
 import numpy as np
 from abc import abstractmethod
-from trainTestSplit import NUMBER_LABEL_MATCH
+from src.trainTestSplit import NUMBER_LABEL_MATCH
 from src.utils import prepImg
 import logging
 
